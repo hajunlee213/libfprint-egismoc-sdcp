@@ -1940,6 +1940,13 @@ egismoc_close (FpDevice *device)
   egismoc_cancel (device);
   g_clear_object (&self->interrupt_cancellable);
 
+  if (self->task_ssm != NULL)
+    {
+      fp_warn ("task_ssm was not properly cleared, cleaning up now.");
+      fpi_ssm_free (self->task_ssm);
+      self->task_ssm = NULL;
+    }
+
   g_usb_device_release_interface (fpi_device_get_usb_device (device),
                                   0, 0, &error);
   fpi_device_close_complete (device, error);
@@ -1984,5 +1991,5 @@ fpi_device_egismoc_class_init (FpiDeviceEgisMocClass *klass)
 
   /* some but not all egismoc devices support reconnect; easiest to just disable for all */
   sdcp_dev_class->supports_reconnect = FALSE;
-  sdcp_dev_class->claim_expiration_seconds = 86400;
+  sdcp_dev_class->claim_expiration_seconds = -1;
 }

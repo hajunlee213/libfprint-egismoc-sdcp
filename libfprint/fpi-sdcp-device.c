@@ -771,9 +771,9 @@ fpi_sdcp_device_init_claim (FpiSdcpDevice *self)
 
   if (!g_str_equal (cached_boot_id, sdcp_get_boot_id ()))
     {
-      fp_dbg ("Cached SDCP claim is from previous boot %s and is no longer valid.", cached_boot_id);
-      fpi_sdcp_device_delete_cached_claim (self);
-      goto generate_new;
+      fp_dbg ("Cached SDCP claim is from previous boot %s. Reusing it.", cached_boot_id);
+      // fpi_sdcp_device_delete_cached_claim (self);
+      // goto generate_new;
     }
 
   priv->claim_connected_time = cached_connected_time;
@@ -824,8 +824,7 @@ fpi_sdcp_device_init_claim (FpiSdcpDevice *self)
     goto cache_init_failed;
   memcpy (priv->application_symmetric_key, app_symmetric_key, SDCP_APPLICATION_SYMMETRIC_KEY_SIZE);
 
-  priv->is_connected = TRUE;
-
+  priv->is_connected = FALSE;
   return TRUE;
 
 cache_init_failed:
